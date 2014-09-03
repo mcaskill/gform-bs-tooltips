@@ -9,18 +9,18 @@ class GF_Tooltips_Admin
 	 * @return GF_Tooltips
 	 */
 	public function __construct() {
-		add_action			(	'admin_enqueue_scripts',				array(	$this,	'scripts_styles'			),	10		);
-		add_action			(	'admin_init',							array(	$this,	'reg_settings'				)			);
-		add_action			(	'admin_notices',						array(	$this,	'active_check'				),	10		);
-		add_action			(	'admin_notices',						array(	$this,	'settings_saved'			),	10		);
+		add_action( 'admin_enqueue_scripts',         array( $this, 'scripts_styles' ), 10 );
+		add_action( 'admin_init',                    array( $this, 'reg_settings'   ) );
+		add_action( 'admin_notices',                 array( $this, 'active_check'   ), 10 );
+		add_action( 'admin_notices',                 array( $this, 'settings_saved' ), 10 );
 
-		add_filter			(	'plugin_action_links',					array(	$this,	'quick_link'				),	10,	2	);
+		add_filter( 'plugin_action_links',           array( $this, 'quick_link' ), 10, 2 );
 
 		// backend GF specifc
-		add_action			(	'gform_field_advanced_settings',		array(	$this,	'add_form_builder_field'	),	10,	2	);
-		add_filter			(	'gform_tooltips',						array(	$this,	'add_form_builder_tooltip'	)			);
-		add_filter			(	'gform_addon_navigation',				array(	$this,	'create_menu'				)			);
-		add_filter			(	'gform_noconflict_scripts',				array(	$this,	'register_admin_script'		)			);
+		add_action( 'gform_field_advanced_settings', array( $this, 'add_form_builder_field'   ), 10, 2 );
+		add_filter( 'gform_tooltips',                array( $this, 'add_form_builder_tooltip' ) );
+		add_filter( 'gform_addon_navigation',        array( $this, 'create_menu'              ) );
+		add_filter( 'gform_noconflict_scripts',      array( $this, 'register_admin_script'    ) );
 	}
 
 
@@ -77,9 +77,9 @@ class GF_Tooltips_Admin
 			return;
 		}
 
-		wp_enqueue_script( 'gftips-admin', plugins_url( '/js/gftips.admin.js', __FILE__ ),	array( 'jquery' ),	GFT_VER, true );
+		wp_enqueue_script( 'gftips-admin', plugins_url( '/js/gftips.admin.js', __FILE__ ), array( 'jquery' ), GFT_VER, true );
 		wp_localize_script( 'gftips-admin', 'gftipsAdmin', array(
-			'fieldtypes'	=> GF_Tooltips::show_field_item_types()
+			'fieldtypes' => GF_Tooltips::show_field_item_types()
 			)
 		);
 
@@ -158,10 +158,10 @@ class GF_Tooltips_Admin
 	public function add_form_builder_tooltip( $tooltips ) {
 
 		// the title of the tooltip
-		$title	= '<h6>'.__( 'Custom Tooltip', 'gravity-tooltips' ).'</h6>';
+		$title = '<h6>'.__( 'Custom Tooltip', 'gravity-tooltips' ).'</h6>';
 
 		// the text
-		$text	= __( 'Enter the content you want to appear in the tooltip for this field.', 'gravity-tooltips' );
+		$text = __( 'Enter the content you want to appear in the tooltip for this field.', 'gravity-tooltips' );
 
 		$tooltips['custom_tooltip_tip'] = $title.$text;
 
@@ -219,13 +219,13 @@ class GF_Tooltips_Admin
 
 			echo '<form method="post" action="options.php">';
 				settings_fields( 'gf-tooltips' );
-				$data	= get_option( 'gf-tooltips' );
+				$data = get_option( 'gf-tooltips' );
 
 				// option index checks
-				$style		= isset( $data['style'] )		? $data['style']	: 'icon';
-				$design		= isset( $data['design'] )		? $data['design']	: 'light';
-				$target		= isset( $data['target'] )		? $data['target']	: 'topRight';
-				$location	= isset( $data['location'] )	? $data['location']	: 'bottomLeft';
+				$style    = isset( $data['style'] )    ? $data['style']    : 'icon';
+				$design   = isset( $data['design'] )   ? $data['design']   : 'light';
+				$target   = isset( $data['target'] )   ? $data['target']   : 'topRight';
+				$location = isset( $data['location'] ) ? $data['location'] : 'bottomLeft';
 
 				echo '<table class="form-table gf-tooltip-table"><tbody>';
 
