@@ -58,9 +58,11 @@ class GF_Tooltips_Front
 			return $classes;
 		}
 
-		// bail if no tooltip actually exists
-		if ( ! isset( $field['customTooltip'] ) || isset( $field['customTooltip'] ) && empty( $field['customTooltip'] ) ) {
-			return $classes;
+		if ( ! isset( $field['tooltipContent'] ) || isset( $field['tooltipContent'] ) && empty( $field['tooltipContent'] ) ) {
+			// bail if no tooltip actually exists
+			if ( ! isset( $field['tooltipTitle'] ) || isset( $field['tooltipTitle'] ) && empty( $field['tooltipTitle'] ) ) {
+				return $classes;
+			}
 		}
 
 		// add class for label tooltip
@@ -104,27 +106,30 @@ class GF_Tooltips_Front
 			return $content;
 		}
 
-		// bail if no tooltip actually exists
-		if ( ! isset( $field['customTooltip'] ) || isset( $field['customTooltip'] ) && empty( $field['customTooltip'] ) ) {
-			return $content;
+		if ( ! isset( $field['tooltipContent'] ) || isset( $field['tooltipContent'] ) && empty( $field['tooltipContent'] ) ) {
+			// bail if no tooltip actually exists
+			if ( ! isset( $field['tooltipTitle'] ) || isset( $field['tooltipTitle'] ) && empty( $field['tooltipTitle'] ) ) {
+				return $content;
+			}
 		}
 
 		// get our content and sanitize it
-		$tooltip = esc_attr( $field['customTooltip'] );
+		$tooltip     = esc_attr( $field['tooltipTitle'] );
+		$description = esc_attr( $field['tooltipContent'] );
 
 		// build out label version
 		if ( $style == 'label' ) {
-			$content = self::render_tooltip_label( $content, $tooltip );
+			$content = self::render_tooltip_label( $content, $tooltip, $description );
 		}
 
 		// build out icon version
 		if ( $style == 'icon' ) {
-			$content = self::render_tooltip_icon( $content, $tooltip );
+			$content = self::render_tooltip_icon( $content, $tooltip, $description );
 		}
 
 		// build out single version
 		if ( $style == 'single' ) {
-			$content = self::render_tooltip_single( $content, $tooltip );
+			$content = self::render_tooltip_single( $content, $tooltip, $description );
 		}
 
 		// return field content with new tooltip
@@ -138,9 +143,13 @@ class GF_Tooltips_Front
 	 * @param  [type] $tooltip [description]
 	 * @return [type]          [description]
 	 */
-	static function render_tooltip_label( $content, $tooltip ) {
+	static function render_tooltip_label( $content, $tooltip = '', $description = '' ) {
+		$attr_title     = ( empty($tooltip)     ? '' : ' title="' . $tooltip . '"' );
+		$attr_content   = ( empty($description) ? '' : ' data-content="' . $tooltip . '"' );
+		$attr_toggle    = ( empty($description) ? ' data-toggle="popover"' : ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) );
+		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto' ) . '"';
 
-		return GF_Tooltips::str_replace_limit( '<label', '<label data-tooltip="' . $tooltip . '"', $content );
+		return GF_Tooltips::str_replace_limit( '<label', '<label data-trigger="click"' . $attr_toggle . $attr_placement . $attr_title . $attr_content, $content );
 
 	}
 
@@ -150,10 +159,14 @@ class GF_Tooltips_Front
 	 * @param  [type] $tooltip [description]
 	 * @return [type]          [description]
 	 */
-	static function render_tooltip_icon( $content, $tooltip ) {
+	static function render_tooltip_icon( $content, $tooltip = '', $description = '' ) {
+		$attr_title     = ( empty($tooltip)     ? '' : ' title="' . $tooltip . '"' );
+		$attr_content   = ( empty($description) ? '' : ' data-content="' . $tooltip . '"' );
+		$attr_toggle    = ( empty($description) ? ' data-toggle="popover"' : ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) );
+		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto' ) . '"';
 
 		$img  = GF_Tooltips::get_tooltip_icon_img( false );
-		$icon = '<img src="'.esc_url( $img ).'" class="gf-tooltip-icon-img" data-tooltip="' . $tooltip . '">';
+		$icon = '<img src="'.esc_url( $img ).'" class="gf-tooltip-icon-img" data-trigger="click"' . $attr_toggle . $attr_placement . $attr_title . $attr_content . '>';
 
 		// drop our tooltip on there
 		return GF_Tooltips::str_replace_limit( '</label>', $icon . '</label>', $content );
@@ -166,10 +179,14 @@ class GF_Tooltips_Front
 	 * @param  [type] $tooltip [description]
 	 * @return [type]          [description]
 	 */
-	static function render_tooltip_single( $content, $tooltip ) {
+	static function render_tooltip_single( $content, $tooltip = '', $description = '' ) {
+		$attr_title     = ( empty($tooltip)     ? '' : ' title="' . $tooltip . '"' );
+		$attr_content   = ( empty($description) ? '' : ' data-content="' . $tooltip . '"' );
+		$attr_toggle    = ( empty($description) ? ' data-toggle="popover"' : ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) );
+		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto' ) . '"';
 
 		$img  = GF_Tooltips::get_tooltip_icon_img( false );
-		$icon = '<span class="gf-tooltip-icon-wrap"><img src="'.esc_url( $img ).'" class="gf-tooltip-icon-img" data-tooltip="' . $tooltip . '"></span>';
+		$icon = '<span class="gf-tooltip-icon-wrap"><img src="'.esc_url( $img ).'" class="gf-tooltip-icon-img" data-trigger="click"' . $attr_toggle . $attr_placement . $attr_title . $attr_content . '"></span>';
 
 		// drop our tooltip on there
 		return GF_Tooltips::str_replace_limit( '</div>', '</div>' . $icon, $content );
@@ -222,18 +239,6 @@ class GF_Tooltips_Front
 			wp_enqueue_script( 'gf-bootstrap', plugins_url( '/js/bootstrap.min.js',      __FILE__ ), array( 'jquery' ), '1.0', true );
 			wp_enqueue_script( 'gf-tooltips',  plugins_url( '/js/gftips.front.min.js',   __FILE__ ), array( 'gf-bootstrap' ), GFT_VER, true );
 		endif;
-
-
-		// set up variables for later use
-		wp_localize_script( 'gf-tooltips', 'ttVars', array(
-			'target'    => self::get_tooltip_data( 'target', 'topRight' ),
-			'location'  => self::get_tooltip_data( 'location', 'bottomLeft' ),
-			'design'    => self::get_tooltip_data( 'design', 'light' ),
-			'showdelay' => self::get_tooltip_customs( 'showdelay' ),
-			'showsolo'  => self::get_tooltip_customs( 'showsolo' ),
-			'hidedelay' => self::get_tooltip_customs( 'hidedelay' ),
-			)
-		);
 
 	}
 

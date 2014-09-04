@@ -4,11 +4,39 @@ class GF_Tooltips_Admin
 {
 
 	/**
+	 * Per field settings
+	 */
+	private $field_settings;
+
+	/**
 	 * This is our constructor
 	 *
 	 * @return GF_Tooltips
 	 */
 	public function __construct() {
+		$this->field_settings = array(
+			(object) array(
+				'title' => 'Tooltip Title',
+				'prop'  => 'tooltipTitle',
+				'name'  => 'tooltip_title',
+				'help'  => (object) array(
+					'id'    => 'gf-tooltip_title',
+					'title' => 'Tooltip Hint',
+					'desc'  => 'Enter an additional detail for the form field. This will provide a hint on how the field should be filled out or selected.'
+				)
+			),
+			(object) array(
+				'title' => 'Tooltip Content',
+				'prop'  => 'tooltipContent',
+				'name'  => 'tooltip_content',
+				'help'  => (object) array(
+					'id'    => 'gf-tooltip_content',
+					'title' => 'Tooltip Information',
+					'desc'  => 'Enter secondary information for this field. This will provide a longer-form description of how the field should be filled out or selected.'
+				)
+			)
+		);
+
 		add_action( 'admin_enqueue_scripts',         array( $this, 'scripts_styles' ), 10 );
 		add_action( 'admin_init',                    array( $this, 'reg_settings'   ) );
 		add_action( 'admin_notices',                 array( $this, 'active_check'   ), 10 );
@@ -80,8 +108,7 @@ class GF_Tooltips_Admin
 		wp_enqueue_script( 'gftips-admin', plugins_url( '/js/gftips.admin.js', __FILE__ ), array( 'jquery' ), GFT_VER, true );
 		wp_localize_script( 'gftips-admin', 'gftipsAdmin', array(
 			'fieldtypes' => GF_Tooltips::show_field_item_types()
-			)
-		);
+		) );
 
 
 	}
@@ -139,16 +166,19 @@ class GF_Tooltips_Admin
 			return;
 		}
 
-		echo '<li class="custom_tooltip_setting field_setting">';
-			echo '<label for="custom_tooltip">';
-				echo __( 'Tooltip Content', 'gravity-tooltips' );
-				echo '&nbsp;' . gform_tooltip( 'custom_tooltip_tip', 'tooltip', true );
-			echo '</label>';
+		foreach ( $this->field_settings as $input ) {
 
-			echo '<input type="text" class="fieldwidth-3" id="custom_tooltip" size="35" onkeyup="SetFieldProperty(\'customTooltip\', this.value);"/>';
+			echo '<li class="' . $input->name . '_setting field_setting">';
+				echo '<label for="' . $input->name . '">';
+					echo __( $input->title, 'gravity-tooltips' );
+					echo '&nbsp;' . gform_tooltip( $input->help->id, 'tooltip', true );
+				echo '</label>';
 
-		echo '</li>';
+				echo '<input type="text" class="fieldwidth-3" id="' . $input->name . '" size="35" onkeyup="SetFieldProperty(\'' . $input->prop . '\', this.value);"/>';
 
+			echo '</li>';
+
+		}
 	}
 
 	/**
@@ -157,13 +187,17 @@ class GF_Tooltips_Admin
 	 */
 	public function add_form_builder_tooltip( $tooltips ) {
 
-		// the title of the tooltip
-		$title = '<h6>'.__( 'Custom Tooltip', 'gravity-tooltips' ).'</h6>';
+		foreach ( $this->field_settings as $input ) {
 
-		// the text
-		$text = __( 'Enter the content you want to appear in the tooltip for this field.', 'gravity-tooltips' );
+			// the title of the tooltip
+			$title = '<h6>' . __( $input->help->title, 'gravity-tooltips' ) . '</h6>';
 
-		$tooltips['custom_tooltip_tip'] = $title.$text;
+			// the text
+			$text = __( $input->help->desc, 'gravity-tooltips' );
+
+			$tooltips[$input->help->id] = $title . $text;
+
+		}
 
 		return $tooltips;
 	}
@@ -222,10 +256,8 @@ class GF_Tooltips_Admin
 				$data = get_option( 'gf-tooltips' );
 
 				// option index checks
-				$style    = isset( $data['style'] )    ? $data['style']    : 'icon';
-				$design   = isset( $data['design'] )   ? $data['design']   : 'light';
-				$target   = isset( $data['target'] )   ? $data['target']   : 'topRight';
-				$location = isset( $data['location'] ) ? $data['location'] : 'bottomLeft';
+				$style     = isset( $data['style'] )     ? $data['style']     : 'icon';
+				$placement = isset( $data['placement'] ) ? $data['placement'] : 'auto';
 
 				echo '<table class="form-table gf-tooltip-table"><tbody>';
 
@@ -251,31 +283,12 @@ class GF_Tooltips_Admin
 					echo '</tr>';
 
 					echo '<tr>';
-						echo '<th scope="row">' . __( 'Design Style', 'gravity-tooltips' ) . '</th>';
-						echo '<td>';
-							echo '<select name="gf-tooltips[design]" id="gf-option-design">';
-							echo GF_Tooltips::get_qtip_designs( $design );
-							echo '</select>';
-						echo '</td>';
-					echo '</tr>';
-
-					echo '<tr>';
-						echo '<th scope="row">' . __( 'Target', 'gravity-tooltips' ) . '</th>';
-						echo '<td>';
-							echo '<select name="gf-tooltips[target]" id="gf-option-Target">';
-							echo GF_Tooltips::get_qtip_placement( $target );
-							echo '</select>';
-							echo '<p class="description">' . __( 'The placement of the tooltip box in relation to the label / icon.', 'gravity-tooltips' ) . '</p>';
-						echo '</td>';
-					echo '</tr>';
-
-					echo '<tr>';
 						echo '<th scope="row">' . __( 'Location', 'gravity-tooltips' ) . '</th>';
 						echo '<td>';
-							echo '<select name="gf-tooltips[location]" id="gf-option-location">';
-							echo GF_Tooltips::get_qtip_placement( $location );
+							echo '<select name="gf-tooltips[placement]" id="gf-option-placement">';
+							echo GF_Tooltips::get_qtip_placement( $placement );
 							echo '</select>';
-							echo '<p class="description">' . __( 'The location on the label / icon for the tooltip box to affix to.', 'gravity-tooltips' ) . '</p>';
+							echo '<p class="description">' . __( 'How to position the tooltip—top | bottom | left | right | auto.', 'gravity-tooltips' ) . '</p>';
 						echo '</td>';
 					echo '</tr>';
 
@@ -286,7 +299,7 @@ class GF_Tooltips_Admin
 			echo '</form>';
 
 			echo '<p>';
-				echo sprintf( __( 'A more detailed explanation about how the tooltip placement and location can be found <a href="%s" target="_blank">here</a>.', 'gravity-tooltips' ), 'http://craigsworks.com/projects/qtip/docs/tutorials/#position' );
+				echo sprintf( __( 'A more detailed explanation about how the tooltip placement and location can be found <a href="%s" target="_blank">here</a>.', 'gravity-tooltips' ), 'http://getbootstrap.com/javascript/#tooltips' );
 			echo '</p>';
 
 			echo self::settings_close();
