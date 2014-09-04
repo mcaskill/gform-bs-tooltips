@@ -212,15 +212,15 @@ class GF_Tooltips_Front
 
 		if( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) :
 		// load non-minified version and debug script with cache breaking timestamp if set
-			wp_enqueue_style( 'gf-tooltips', plugins_url( '/css/gftips.front.css',     __FILE__ ), array(), GFT_VER, 'all' );
-			wp_enqueue_script( 'qtip-tips',   plugins_url( '/js/jquery.qtip.js',       __FILE__ ), array( 'jquery' ), time(), true );
-			wp_enqueue_script( 'qtip-debug',  plugins_url( '/js/jquery.qtip.debug.js', __FILE__ ), array( 'jquery' ), time(), true );
-			wp_enqueue_script( 'gf-tooltips', plugins_url( '/js/gftips.front.js',      __FILE__ ), array( 'jquery' ), GFT_VER, true );
+			wp_enqueue_style(  'gf-tooltips',  plugins_url( '/css/gftips.front.css',    __FILE__ ), array(), GFT_VER, 'all' );
+			wp_enqueue_script( 'bs-tooltip',   plugins_url( '/js/bootstrap.tooltip.js', __FILE__ ), array( 'jquery' ), time(), true );
+			wp_enqueue_script( 'bs-popover',   plugins_url( '/js/bootstrap.popover.js', __FILE__ ), array( 'bs-tooltip' ), time(), true );
+			wp_enqueue_script( 'gf-tooltips',  plugins_url( '/js/gftips.front.js',      __FILE__ ), array( 'bs-tooltip', 'bs-popover' ), GFT_VER, true );
 		else:
 		// load the normal minified
-			wp_enqueue_style( 'gf-tooltips', plugins_url( '/css/gftips.front.min.css', __FILE__ ), array(), GFT_VER, 'all' );
-			wp_enqueue_script( 'qtip-tips',   plugins_url( '/js/jquery.qtip.min.js',    __FILE__ ), array( 'jquery' ), '1.0', true );
-			wp_enqueue_script( 'gf-tooltips', plugins_url( '/js/gftips.front.min.js',   __FILE__ ), array( 'jquery' ), GFT_VER, true );
+			wp_enqueue_style(  'gf-tooltips',  plugins_url( '/css/gftips.front.min.css', __FILE__ ), array(), GFT_VER, 'all' );
+			wp_enqueue_script( 'gf-bootstrap', plugins_url( '/js/bootstrap.min.js',      __FILE__ ), array( 'jquery' ), '1.0', true );
+			wp_enqueue_script( 'gf-tooltips',  plugins_url( '/js/gftips.front.min.js',   __FILE__ ), array( 'gf-bootstrap' ), GFT_VER, true );
 		endif;
 
 
