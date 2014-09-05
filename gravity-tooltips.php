@@ -124,11 +124,11 @@ class GF_Tooltips
 	}
 
 	/**
-	 * [get_qtip_placement description]
+	 * [get_tooltip_placement description]
 	 * @param  [type] $current [description]
 	 * @return [type]         [description]
 	 */
-	static function get_qtip_placement( $current ) {
+	static function get_tooltip_placement( $current ) {
 
 		$options = array(
 			'top'    => __( 'Top', 'gravity-tooltips' ),

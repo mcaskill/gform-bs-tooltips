@@ -286,7 +286,7 @@ class GF_Tooltips_Admin
 						echo '<th scope="row">' . __( 'Location', 'gravity-tooltips' ) . '</th>';
 						echo '<td>';
 							echo '<select name="gf-tooltips[placement]" id="gf-option-placement">';
-							echo GF_Tooltips::get_qtip_placement( $placement );
+							echo GF_Tooltips::get_tooltip_placement( $placement );
 							echo '</select>';
 							echo '<p class="description">' . __( 'How to position the tooltip—top | bottom | left | right | auto.', 'gravity-tooltips' ) . '</p>';
 						echo '</td>';
