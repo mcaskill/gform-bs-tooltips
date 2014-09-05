@@ -146,8 +146,8 @@ class GF_Tooltips_Front
 	static function render_tooltip_label( $content, $tooltip = '', $description = '' ) {
 		$attr_title     = ( empty($tooltip)     ? '' : ' title="' . $tooltip . '"' );
 		$attr_content   = ( empty($description) ? '' : ' data-content="' . $tooltip . '"' );
-		$attr_toggle    = ( empty($description) ? ' data-toggle="popover"' : ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) );
-		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto' ) . '"';
+		$attr_toggle    = ( empty($description) ? ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) : ' data-toggle="popover"' );
+		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto left' ) . '"';
 
 		return GF_Tooltips::str_replace_limit( '<label', '<label data-trigger="click"' . $attr_toggle . $attr_placement . $attr_title . $attr_content, $content );
 
@@ -162,8 +162,8 @@ class GF_Tooltips_Front
 	static function render_tooltip_icon( $content, $tooltip = '', $description = '' ) {
 		$attr_title     = ( empty($tooltip)     ? '' : ' title="' . $tooltip . '"' );
 		$attr_content   = ( empty($description) ? '' : ' data-content="' . $tooltip . '"' );
-		$attr_toggle    = ( empty($description) ? ' data-toggle="popover"' : ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) );
-		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto' ) . '"';
+		$attr_toggle    = ( empty($description) ? ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) : ' data-toggle="popover"' );
+		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto left' ) . '"';
 
 		$img  = GF_Tooltips::get_tooltip_icon_img( false );
 		$icon = '<img src="'.esc_url( $img ).'" class="gf-tooltip-icon-img" data-trigger="click"' . $attr_toggle . $attr_placement . $attr_title . $attr_content . '>';
@@ -182,8 +182,8 @@ class GF_Tooltips_Front
 	static function render_tooltip_single( $content, $tooltip = '', $description = '' ) {
 		$attr_title     = ( empty($tooltip)     ? '' : ' title="' . $tooltip . '"' );
 		$attr_content   = ( empty($description) ? '' : ' data-content="' . $tooltip . '"' );
-		$attr_toggle    = ( empty($description) ? ' data-toggle="popover"' : ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) );
-		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto' ) . '"';
+		$attr_toggle    = ( empty($description) ? ( empty($tooltip) ? '' : ' data-toggle="tooltip"' ) : ' data-toggle="popover"' );
+		$attr_placement = ' data-placement="' . self::get_tooltip_data( 'placement', 'auto left' ) . '"';
 
 		$img  = GF_Tooltips::get_tooltip_icon_img( false );
 		$icon = '<span class="gf-tooltip-icon-wrap"><img src="'.esc_url( $img ).'" class="gf-tooltip-icon-img" data-trigger="click"' . $attr_toggle . $attr_placement . $attr_title . $attr_content . '"></span>';
