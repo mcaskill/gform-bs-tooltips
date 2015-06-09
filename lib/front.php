@@ -98,6 +98,9 @@ class GF_Tooltips_Front
 			return $content;
 		}
 
+   		//added empty label placeholder for section field
+                $content = GF_Tooltips::str_replace_limit( '</h2>', '<label class="tooltip-section"></label></h2>', $content );
+
 		// grab our tooltip style first
 		$style = self::get_tooltip_data( 'style', 'icon' );
 

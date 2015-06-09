@@ -114,7 +114,8 @@ class GF_Tooltips
 			'donation',
 			'total',
 			'post_custom_field',
-			'password'
+			'password',
+			'section'
 		);
 
 		$defaults = apply_filters( 'gf_tooltips_allowed_fields', $defaults );
